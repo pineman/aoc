@@ -43,6 +43,7 @@ func Test_partOne(t *testing.T) {
 		want int
 	}{
 		{"", args{aoc2022.GetInput(3)}, 8105},
+		{"", args{aoc2022.GetBigBoyInput(3)}, 91038443},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,6 +64,7 @@ func Test_partTwo(t *testing.T) {
 		want int
 	}{
 		{"", args{aoc2022.GetInput(3)}, 2363},
+		{"", args{aoc2022.GetBigBoyInput(3)}, 27355441},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
