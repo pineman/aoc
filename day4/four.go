@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	aoc2022 "github.com/pineman/code/chall/aoc2022/go"
+	aoc2022 "github.com/pineman/aoc2022"
 )
 
 func partOne(input []string) int {

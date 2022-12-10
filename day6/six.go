@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/bits"
 
-	aoc2022 "github.com/pineman/code/chall/aoc2022/go"
+	aoc2022 "github.com/pineman/aoc2022"
 )
 
 // func isAllDifferent_terrible(s string) bool {

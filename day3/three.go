@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	aoc2022 "github.com/pineman/code/chall/aoc2022/go"
+	aoc2022 "github.com/pineman/aoc2022"
 )
 
 func itemMap(items string) map[rune]int {
