@@ -5,49 +5,42 @@ defmodule Aoc.One do
     IO.puts(part_two(input))
   end
 
+  def first_last_matching(line, regex) do
+    Regex.scan(regex, line)
+    |> List.flatten()
+    |> Enum.reject(&(&1 == ""))
+    |> (&[List.first(&1), List.last(&1)]).()
+    |> Enum.map(&to_integer/1)
+    |> (fn [a, b] -> a * 10 + b end).()
+  end
+
+  def to_integer(s) do
+    s
+    |> String.replace("one", "1")
+    |> String.replace("two", "2")
+    |> String.replace("three", "3")
+    |> String.replace("four", "4")
+    |> String.replace("five", "5")
+    |> String.replace("six", "6")
+    |> String.replace("seven", "7")
+    |> String.replace("eight", "8")
+    |> String.replace("nine", "9")
+    |> String.to_integer()
+  end
+
   def part_one(input) do
+    regex = ~r/(?=(1|2|3|4|5|6|7|8|9))/
+
     input
-    |> Enum.map(fn line ->
-      numbers = String.replace(line, ~r/[a-z]/, "")
-      a = numbers |> String.first() |> String.to_integer()
-      b = numbers |> String.last() |> String.to_integer()
-      a * 10 + b
-    end)
+    |> Enum.map(&first_last_matching(&1, regex))
     |> Enum.reduce(&+/2)
   end
 
-  def translate(line) do
-    list =
-      [
-        [~r/one|1/, "1"],
-        [~r/two|2/, "2"],
-        [~r/three|3/, "3"],
-        [~r/four|4/, "4"],
-        [~r/five|5/, "5"],
-        [~r/six|6/, "6"],
-        [~r/seven|7/, "7"],
-        [~r/eight|8/, "8"],
-        [~r/nine|9/, "9"]
-      ]
-      |> Enum.flat_map(fn [regex, number] ->
-        regex
-        |> Regex.scan(line, return: :index)
-        |> Enum.map(fn [{index, _size}] ->
-          %{number: number, index: index}
-        end)
-      end)
-      |> Enum.sort_by(fn %{index: index, number: _number} ->
-        index
-      end)
-
-    a = List.first(list) |> Map.get(:number) |> String.to_integer()
-    b = List.last(list) |> Map.get(:number) |> String.to_integer()
-    a * 10 + b
-  end
-
   def part_two(input) do
+    regex = ~r/(?=(one|1|two|2|three|3|four|4|five|5|six|6|seven|7|eight|8|nine|9))/
+
     input
-    |> Enum.map(&translate/1)
+    |> Enum.map(&first_last_matching(&1, regex))
     |> Enum.reduce(&+/2)
   end
 end

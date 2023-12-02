@@ -12,7 +12,7 @@ defmodule Aoc.One.Test do
       assert Aoc.One.part_two(input) == 54208
     end
 
-    test "part two" do
+    test "part two example" do
       input = [
         "two1nine",
         "eightwothree",
