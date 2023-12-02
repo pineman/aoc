@@ -7,21 +7,9 @@ defmodule Aoc.One.Test do
       assert Aoc.One.part_one(input) == 54940
     end
 
-    test "translate" do
-      input = [
-        ~w(two1nine 219),
-        ~w(eightwothree 8wo3),
-        ~w(abcone2threexyz abc123xyz),
-        ~w(xtwone3four x2ne34),
-        ~w(4nineeightseven2 49872),
-        ~w(zoneight234 z1ight234),
-        ~w(7pqrstsixteen 7pqrst6teen)
-      ]
-
-      input
-      |> Enum.each(fn [input, output] ->
-        assert Aoc.One.translate(input) == output
-      end)
+    test "part two" do
+      input = Aoc.get_input("one")
+      assert Aoc.One.part_two(input) == 54208
     end
 
     test "part two" do
