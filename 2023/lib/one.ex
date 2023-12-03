@@ -9,7 +9,7 @@ defmodule Aoc.One do
     Regex.scan(regex, line)
     |> List.flatten()
     |> Enum.reject(&(&1 == ""))
-    |> (&[List.first(&1), List.last(&1)]).()
+    |> (fn l -> [List.first(l), List.last(l)] end).()
     |> Enum.map(&to_integer/1)
     |> (fn [a, b] -> a * 10 + b end).()
   end
@@ -29,7 +29,7 @@ defmodule Aoc.One do
   end
 
   def part_one(input) do
-    regex = ~r/(?=(1|2|3|4|5|6|7|8|9))/
+    regex = ~r/\d/
 
     input
     |> Enum.map(&first_last_matching(&1, regex))
