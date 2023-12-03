@@ -5,31 +5,34 @@ defmodule Aoc.Two do
     IO.puts(part_two(input))
   end
 
+  def game(line) do
+    [game, sets] = String.split(line, ":")
+    game_id = String.split(game) |> List.last() |> String.to_integer()
+
+    sets
+    |> String.split(";")
+    |> Enum.flat_map(fn set ->
+      set
+      |> String.trim()
+      |> String.split()
+      |> Enum.chunk_every(2)
+    end)
+    |> Enum.group_by(
+      fn [_count, cube] -> String.replace(cube, ",", "") end,
+      fn [count, _cube] -> String.to_integer(count) end
+    )
+    |> Map.put("game_id", game_id)
+  end
+
   def part_one(input) do
     input
     |> Enum.map(fn line ->
-      [game, rest] = String.split(line, ":")
-      game_id = String.split(game) |> List.last() |> String.to_integer()
+      map = game(line)
 
       possible? =
-        rest
-        |> String.split(";")
-        |> Enum.flat_map(fn run ->
-          run
-          |> String.trim()
-          |> String.split()
-          |> Enum.chunk_every(2)
-          |> Enum.map(fn [count, cube] ->
-            count = String.to_integer(count)
-            cube = String.replace(cube, ",", "")
+        Enum.max(map["red"]) <= 12 && Enum.max(map["green"]) <= 13 && Enum.max(map["blue"]) <= 14
 
-            (cube == "red" && count <= 12) || (cube == "green" && count <= 13) ||
-              (cube == "blue" && count <= 14)
-          end)
-        end)
-        |> Enum.all?(&(&1 == true))
-
-      if possible?, do: game_id, else: 0
+      if possible?, do: map["game_id"], else: 0
     end)
     |> Enum.reduce(&+/2)
   end
@@ -37,28 +40,8 @@ defmodule Aoc.Two do
   def part_two(input) do
     input
     |> Enum.map(fn line ->
-      line
-      |> String.split(":")
-      |> List.last()
-      |> String.split(";")
-      |> Enum.flat_map(fn run ->
-        run
-        |> String.trim()
-        |> String.split()
-        |> Enum.chunk_every(2)
-      end)
-      |> Enum.group_by(
-        fn [_count, cube] ->
-          String.replace(cube, ",", "")
-        end,
-        fn [count, _cube] ->
-          String.to_integer(count)
-        end
-      )
-      |> Enum.map(fn {color, counts} ->
-        Enum.max(counts)
-      end)
-      |> Enum.reduce(&*/2)
+      map = game(line)
+      Enum.max(map["red"]) * Enum.max(map["green"]) * Enum.max(map["blue"])
     end)
     |> Enum.reduce(&+/2)
   end
