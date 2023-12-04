@@ -5,6 +5,8 @@ defmodule Aoc.Two do
     IO.puts(part_two(input))
   end
 
+  # Splitting is admitedly very grug, but probably should've been done using a
+  # regex 
   def game(line) do
     [game, sets] = String.split(line, ":")
     game_id = String.split(game) |> List.last() |> String.to_integer()

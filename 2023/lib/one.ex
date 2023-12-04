@@ -8,10 +8,11 @@ defmodule Aoc.One do
   def first_last_matching(line, regex) do
     Regex.scan(regex, line)
     |> List.flatten()
+    # could use capture: :all_but_first to avoid this Enum.reject caused by the
+    # part two regex, but then it breaks the part one regex as well.
     |> Enum.reject(&(&1 == ""))
-    |> (fn l -> [List.first(l), List.last(l)] end).()
-    |> Enum.map(&to_integer/1)
-    |> (fn [a, b] -> a * 10 + b end).()
+    |> (fn l -> "#{List.first(l)}#{List.last(l)}" end).()
+    |> to_integer()
   end
 
   def to_integer(s) do
