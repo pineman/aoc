@@ -6,7 +6,7 @@ defmodule Aoc.Two do
   end
 
   # Splitting is admitedly very grug, but probably should've been done using a
-  # regex 
+  # regex
   def game(line) do
     [game, sets] = String.split(line, ":")
     game_id = String.split(game) |> List.last() |> String.to_integer()
@@ -32,7 +32,9 @@ defmodule Aoc.Two do
       map = game(line)
 
       possible? =
-        Enum.max(map["red"]) <= 12 && Enum.max(map["green"]) <= 13 && Enum.max(map["blue"]) <= 14
+        Enum.max(map["red"]) <= 12 and
+          Enum.max(map["green"]) <= 13 and
+          Enum.max(map["blue"]) <= 14
 
       if possible?, do: map["game_id"], else: 0
     end)
