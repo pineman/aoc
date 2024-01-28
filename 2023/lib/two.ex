@@ -1,9 +1,5 @@
 defmodule Aoc.Two do
-  def run do
-    input = Aoc.get_input("two")
-    IO.puts(part_one(input))
-    IO.puts(part_two(input))
-  end
+  use Aoc
 
   # Splitting is admitedly very grug, but probably should've been done using a
   # regex

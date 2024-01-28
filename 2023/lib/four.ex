@@ -1,9 +1,5 @@
 defmodule Aoc.Four do
-  def run do
-    input = Aoc.get_input("four")
-    IO.puts(part_one(input))
-    IO.puts(part_two(input))
-  end
+  use Aoc
 
   def count_matching(line) do
     [win, have] =

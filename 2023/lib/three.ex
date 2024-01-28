@@ -1,9 +1,5 @@
 defmodule Aoc.Three do
-  def run do
-    input = Aoc.get_input("three")
-    IO.puts(part_one(input))
-    IO.puts(part_two(input))
-  end
+  use Aoc
 
   def part_numbers(line, prev_line, next_line) do
     Regex.scan(~r/\d+/, line, return: :index)

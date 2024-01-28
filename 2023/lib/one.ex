@@ -1,9 +1,5 @@
 defmodule Aoc.One do
-  def run do
-    input = Aoc.get_input("one")
-    IO.puts(part_one(input))
-    IO.puts(part_two(input))
-  end
+  use Aoc
 
   def first_last_matching(line, regex) do
     Regex.scan(regex, line)
