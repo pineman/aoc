@@ -68,11 +68,13 @@ puts part_one(input) # 6498
 
 def fix(rules, update)
   res = []
-  rules = update.each_with_object({}) { |u, h| h[u] = rules[u]&.filter { |a| a.in?(update) } }.delete_if { |_, v| v.blank? }
+  rules = update.to_h { |u| [u, rules[u]&.intersection(update) || []] }
+  # there seems to always be only *exactly* one page that has no rules.
+  # I thought it'd be many... seems particular of this dataset.
   while res.size < update.size
-    pages_without_rules = (update - res).reject { rules[_1] }
+    pages_without_rules = (update - res).filter { rules[_1].empty? }
     res.prepend(*pages_without_rules)
-    rules = rules.transform_values { |v| v - pages_without_rules }.delete_if { |_, v| v.blank? }
+    rules.transform_values! { |v| v - pages_without_rules }
   end
   res
 end
@@ -82,7 +84,7 @@ def part_two(input)
   updates
     .reject { |u| correct?(rules, u) }
     .map { |u| fix(rules, u) }
-    .sum { |u| u[u.size/2].to_i }
+    .sum { |u| u[u.size/2].to_i } # could early out in fix once we're half way
 end
 
 puts part_two(input) # 5017
