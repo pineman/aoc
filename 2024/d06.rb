@@ -79,7 +79,6 @@ puts part_one(input) # 5067
 def loop?(map, i, j, dir)
   max_i = map.size
   max_j = map[0].size
-  oi, oj = i, j
   loop do
     map[i][j] = [?X, dir] unless map[i][j].is_a?(Array)
     ii, jj = _next(dir, i, j)
