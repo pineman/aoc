@@ -68,7 +68,7 @@ puts part_one(input) # 6498
 
 def fix(rules, update)
   res = []
-  rules = update.to_h { |u| [u, rules[u]&.intersection(update) || []] }
+  rules = update.to_h { |u| [u, rules[u]&.intersection(update) || []] } # TODO: can use rules[u] & update ?
   # there seems to always be only *exactly* one page that has no rules.
   # I thought it'd be many... seems particular of this dataset.
   while res.size < update.size
