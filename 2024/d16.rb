@@ -45,35 +45,35 @@ def n(map, u, facing)
   r
 end
 
+require 'algorithms'
+include Containers
+
 def s(map, sc, tc)
-  q = Set.new
+  q = PriorityQueue.new
   face = {}
-  dist = {}
+  dist = Hash.new(Float::INFINITY)
+  vis = Set.new
   prev = {}
-  map.each.with_index { |r, i| 
-    r.each.with_index { |_, j|
-      dist[[i,j]] = Float::INFINITY
-      prev[[i,j]] = nil
-      q << [i,j]
-    }
-  }
-  dist[sc] = 0
+
+  q.push(sc, 0)
   face[sc] = :east
+  dist[sc] = 0
+
   while !q.empty?
-    u = q.min_by { dist[_1] }
-    facing = face[u]
+    u = q.pop
     break if u == tc
-    q.delete(u)
-    n(map, u, facing).each { |v, score, new_facing|
-      next if !q.include?(v)
-      face[v] = new_facing
-      alt = dist[u] + score
-      if alt < dist[v]
-        dist[v] = alt
+    next if !vis.add?(u)
+    n(map, u, face[u]).each { |v, new_dist, facing|
+      face[v] = facing
+      new_dist = dist[u] + new_dist
+      if new_dist < dist[v]
+        dist[v] = new_dist
         prev[v] = u
+        q.push(v, -new_dist)
       end
     }
   end
+
   [dist, prev]
 end
 
@@ -85,7 +85,7 @@ def part_one(input)
   map.each.with_index { |r, i| r.each.with_index { |c, j| tc = [i, j] if c == ?E } }
   dist, prev = s(map, sc, tc)
 
-  #i,j = [ti,tj]
+  #i,j = tc
   #begin
   #  p dist[[i,j]]
   #  map[i][j] = ?O
