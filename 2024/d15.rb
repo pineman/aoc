@@ -128,6 +128,4 @@ def part_one(input)
   t
 end
 
-puts part_one(ex)
-puts part_one(ex2)
-puts part_one(input)
+puts part_one(input) # 1479679

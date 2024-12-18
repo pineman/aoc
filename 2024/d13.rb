@@ -32,8 +32,7 @@ def part_one(input)
   }.sum
 end
 
-#puts part_one(ex)
-puts part_one(input)
+puts part_one(input) # 30413
 
 def part_two(input)
   input.chunk(&:empty?).filter_map { |v, c| c if !v }.filter_map { |c|
@@ -48,4 +47,4 @@ def part_two(input)
   }.sum
 end
 
-puts part_two(input)
+puts part_two(input) # 92827349540204

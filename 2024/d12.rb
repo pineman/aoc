@@ -62,10 +62,7 @@ def part_one(input)
   }.compact.sum
 end
 
-#puts part_one(ex)
-#puts part_one(ex2)
-#puts part_one(ex3)
-#puts part_one(input)
+puts part_one(input) # 1375574
 
 def m(map, shape_set)
   mi = map.size - 1
