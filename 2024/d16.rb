@@ -52,8 +52,7 @@ def s(map, sc, tc)
   q = PriorityQueue.new
   face = {}
   dist = Hash.new(Float::INFINITY)
-  vis = Set.new
-  prev = {}
+  prev = Hash.new { |h, k| h[k] = [] }
 
   q.push(sc, 0)
   face[sc] = :east
@@ -61,14 +60,12 @@ def s(map, sc, tc)
 
   while !q.empty?
     u = q.pop
-    break if u == tc
-    next if !vis.add?(u)
     n(map, u, face[u]).each { |v, new_dist, facing|
       face[v] = facing
       new_dist = dist[u] + new_dist
-      if new_dist < dist[v]
+      if new_dist <= dist[v]
         dist[v] = new_dist
-        prev[v] = u
+        prev[v] << u
         q.push(v, -new_dist)
       end
     }
@@ -97,3 +94,27 @@ end
 
 #puts part_one(ex)
 puts part_one(input) # 73432
+
+def f(v, prev, c)
+  v << c
+  n = prev[c]
+  return if !n
+  n.each { f(v, prev, _1) }
+end
+
+def part_two(input)
+  map = input.map(&:chars)
+  sc = nil
+  map.each.with_index { |r, i| r.each.with_index { |c, j| sc = [i, j] if c == ?S } }
+  tc = nil
+  map.each.with_index { |r, i| r.each.with_index { |c, j| tc = [i, j] if c == ?E } }
+  dist, prev = s(map, sc, tc)
+
+  pp prev
+  v = Set.new
+  f(v, prev, tc)
+  v.each { |i,j| map[i][j] = ?O }
+  puts map.map(&:join).join("\n")
+end
+
+puts part_two(ex)
