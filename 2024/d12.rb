@@ -28,6 +28,20 @@ ex3 = [
   "MMMISSJEEE"
 ]
 
+exsaveme = [
+  "AAAB",
+  "ABAA",
+  "ABAB",
+  "BBAB",
+  "AAAB"
+]
+
+exsaveme2 = [
+  "BBBBB",
+  "BAAAA",
+  "BBBBB"
+]
+
 def r(map, v_set, i, j, area, per)
   return [area, per] if v_set.include?([i, j])
   v_set << [i,j]
@@ -147,169 +161,134 @@ def pad(map)
   pad
 end
 
+
+# AAA   
+# A A
+# A A
+#   A
+# AAA
+# 
+# from W to E, cols A guys who dont have a A neighbor to the W and are not adjacent going N
+# 2, 0, 1
+# 
+# from E to W, cols A guys who dont have a A neighbor to the E and are not adjacent going N 
+# 1, 0, 1
+# 
+# from N to S, rows A guys who dont have a A neighbor to the N and are not adjacent going W
+# 1, 0, 0, 0, 1
+# 
+# from S to N, rows A guys who dont have a A neighbor to the S and are not adjacent going W
+# 1, 0, 1, 0, 1
+# 
+# t = 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 10
+# 
+# AAA   
+# A AA
+# A A
+#   A
+# AAA
+# 
+# from W to E, cols A guys who dont have a A neighbor to the W and dont have a A neighbor to the N (faces N to S)
+# 2, 0, 
+# 
+# from E to W, cols A guys who dont have a A neighbor to the E and are not adjacent going N (faces S to N)
+# 
+# 
+# from N to S, rows A guys who dont have a A neighbor to the N and are not adjacent going W (faces W to E)
+# 
+# 
+# from S to N, rows A guys who dont have a A neighbor to the S and are not adjacent going W (faces E to W)
+# 
+# 
+# t = 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 10
+# 
+# XCXC
+# XCCX
+# XXCX
+# 
+# 1. from W to E, cols A guys who dont have a A neighbor to the W and are not adjacent going N (faces N to S)
+# 1, 1
+# 
+# 2. from E to W, cols A guys who dont have a A neighbor to the E and are not adjacent going N (faces S to N)
+# 1, 1
+# 
+# 3. from N to S, rows A guys who dont have a A neighbor to the N and are not adjacent going W (faces W to E)
+# 1, 0
+# 
+# 4. from S to N, rows A guys who dont have a A neighbor to the S and are not adjacent going W (faces E to W)
+# 1, 0
+
 def m(pad, shape_set)
+  shape_set.map! { |i,j| [i+1,j+1] }
   mi = pad.size - 1
   mj = pad[0].size - 1
-  b = Set.new # border set
-  shape_set.map! { |i,j| [i+1,j+1] }
-  i, j = shape_set.to_a[0]
+  i,j = shape_set.first
   l = pad[i][j]
-  shape_set.each { |i, j|
-    b << [i-1, j] if pad[i-1][j] != l
-    b << [i+1, j] if pad[i+1][j] != l
-    b << [i, j-1] if pad[i][j-1] != l
-    b << [i, j+1] if pad[i][j+1] != l
-  }
+  sides = 0
 
-
-  a = pad.map(&:clone)
-  pad.each.with_index { |r, i|
-    r.each.with_index { |c, j|
-      a[i][j] = ?.
+  # from W to E, cols A guys who dont have a A neighbor to the W and are not adjacent going N 
+  (1...mj).each { |j|
+    active = false
+    (1...mi).to_a.each { |i|
+      next if pad[i][j] == l && !shape_set.include?([i,j])
+      new_active = pad[i][j] == l && pad[i][j-1] != l
+      if !active && new_active
+        active = true
+        sides += 1
+      elsif active && !new_active
+        active = false
+      end
     }
   }
-  shape_set.each { |i, j| a[i][j] = l }
-  b.each { |i, j| a[i][j] = ?x }
-  puts a.map { _1.join }.join("\n")
 
-  adj = Set.new
-  b.each { |i,j|
-    next if adj.include?([i,j])
-    p [i,j]
-    bb = b.to_a
-
-    a = [[i,j]]
-    ii, jj = [i,j]
-    #if (i > 0 && shape_set.include?([i-1,j]) && pad[i-1][j]==l) || (i < mi && shape_set.include?([i+1,j]) && pad[i+1][j]==l)
-      while n = bb.find { _1 == [ii,jj-1] }
-        a << n unless shape_set.include?([ii-1,jj-1]) && shape_set.include?([ii+1,jj-1])
-        jj -= 1
+  # from W to E, cols A guys who dont have a A neighbor to the E and are not adjacent going N 
+  (1...mj).to_a.reverse.each { |j|
+    active = false
+    (1...mi).to_a.each { |i|
+      next if pad[i][j] == l && !shape_set.include?([i,j])
+      new_active = pad[i][j] == l && pad[i][j+1] != l
+      if !active && new_active
+        active = true
+        sides += 1
+      elsif active && !new_active
+        active = false
       end
-      ii, jj = [i,j]
-      while n = bb.find { _1 == [ii,jj+1] }
-        a << n unless shape_set.include?([ii-1,jj+1]) && shape_set.include?([ii+1,jj+1])
-        jj += 1
-      end
-    #else
-      while n = bb.find { _1 == [ii-1,jj] }
-        a << n unless shape_set.include?([ii-1,jj-1]) && shape_set.include?([ii-1,jj+1])
-        ii -= 1
-      end
-      ii, jj = [i,j]
-      while n = bb.find { _1 == [ii+1,jj] }
-        a << n unless shape_set.include?([ii+1,jj-1]) && shape_set.include?([ii+1,jj+1])
-        ii += 1
-      #end
-    end
-
-    pp a
-
-    choose = a.map { |i,j| 
-      z = 0
-      if i > 0 && shape_set.include?([i-1,j]) && pad[i-1][j]==l
-        z+=1
-      end
-      if i < mi && shape_set.include?([i+1,j]) && pad[i+1][j]==l
-        z+=1
-      end
-      if j > 0 && shape_set.include?([i,j-1]) && pad[i][j-1]==l
-        z+=1
-      end
-      if j < mj && shape_set.include?([i,j+1]) && pad[i][j+1]==l
-        z+=1
-      end
-      [[i,j],z]
-    }
-    p 'choose'
-    pp choose
-    pp a
-    a -= [choose.max_by { _2 }[0]]
-    pp a
-    adj.merge(a)
-
-    pp adj
-  }
-
-  b -= adj
-
-  a = pad.map(&:clone)
-  pad.each.with_index { |r, i|
-    r.each.with_index { |c, j|
-      a[i][j] = ?.
     }
   }
-  shape_set.each { |i, j| a[i][j] = l }
-  b.each { |i, j| a[i][j] = ?x }
-  puts a.map { _1.join }.join("\n")
 
-  x_comp = b.map { |i,j| 
-    a = 0
-    up = i > 0 && shape_set.include?([i-1,j]) && pad[i-1][j]==l
-    down = i < mi && shape_set.include?([i+1,j]) && pad[i+1][j]==l
-    left = j > 0 && shape_set.include?([i,j-1]) && pad[i][j-1]==l
-    right = j < mj && shape_set.include?([i,j+1]) && pad[i][j+1]==l
-    if up && down && !left && !right
-      a = 1
-    elsif !up && !down && left && right
-      a = 1
-    else
-      if i > 0 && shape_set.include?([i-1,j]) && pad[i-1][j]==l
-        a+=1
+  # from N to S, rows A guys who dont have a A neighbor to the N and are not adjacent going W
+  (1...mi).each { |i|
+    active = false
+    (1...mj).to_a.each { |j|
+      next if pad[i][j] == l && !shape_set.include?([i,j])
+      new_active = pad[i][j] == l && pad[i-1][j] != l
+      if !active && new_active
+        active = true
+        sides += 1
+      elsif active && !new_active
+        active = false
       end
-      if i < mi && shape_set.include?([i+1,j]) && pad[i+1][j]==l
-        a+=1
-      end
-      if j > 0 && shape_set.include?([i,j-1]) && pad[i][j-1]==l
-        a+=1
-      end
-      if j < mj && shape_set.include?([i,j+1]) && pad[i][j+1]==l
-        a+=1
-      end
-    end
-    [[i,j], a]
-  }
-
-  a = pad.map(&:clone)
-  pad.each.with_index { |r, i|
-    r.each.with_index { |c, j|
-      a[i][j] = ?.
     }
   }
-  shape_set.each { |i, j| a[i][j] = l }
-  b -= adj
-  b.each { |i, j| 
-    z = 0
-    up = i > 0 && shape_set.include?([i-1,j]) && pad[i-1][j]==l
-    down = i < mi && shape_set.include?([i+1,j]) && pad[i+1][j]==l
-    left = j > 0 && shape_set.include?([i,j-1]) && pad[i][j-1]==l
-    right = j < mj && shape_set.include?([i,j+1]) && pad[i][j+1]==l
-    if up && down && !left && !right
-      z = 1
-    elsif !up && !down && left && right
-      z = 1
-    else
-      if i > 0 && shape_set.include?([i-1,j]) && pad[i-1][j]==l
-        z+=1
-      end
-      if i < mi && shape_set.include?([i+1,j]) && pad[i+1][j]==l
-        z+=1
-      end
-      if j > 0 && shape_set.include?([i,j-1]) && pad[i][j-1]==l
-        z+=1
-      end
-      if j < mj && shape_set.include?([i,j+1]) && pad[i][j+1]==l
-        z+=1
-      end
-    end
-    a[i][j] = z.to_s
-  }
-  puts a.map { _1.join }.join("\n")
 
-  pp x_comp
-  pp x_comp.sum { _1[1] }
-  puts
-  x_comp.sum { _1[1] }
+  # from S to N, rows A guys who dont have a A neighbor to the S and are not adjacent going W
+  (1...mi).to_a.reverse.each { |i|
+    active = false
+    (1...mj).to_a.each { |j|
+      next if pad[i][j] == l && !shape_set.include?([i,j])
+      new_active = pad[i][j] == l && pad[i+1][j] != l
+      if !active && new_active
+        active = true
+        sides += 1
+      elsif active && !new_active
+        active = false
+      end
+    }
+  }
+
+  sides
 end
+
 
 def part_two(input)
   map = input.map(&:chars)
@@ -327,9 +306,11 @@ def part_two(input)
 end
 
 #puts part_two(ex) # 80
+#puts part_two(exsaveme)
+#puts part_two(exsaveme2)
 #puts part_two(ex2) # 436
 #puts part_two(ex4) # 236
 #puts part_two(ex3) # 1206
 #puts part_two(exx)
 #puts part_two(exxx)
-puts part_two(input)
+puts part_two(input) # 830566
