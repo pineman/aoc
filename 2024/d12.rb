@@ -229,7 +229,7 @@ def m(pad, shape_set)
   # from W to E, cols A guys who dont have a A neighbor to the W and are not adjacent going N 
   (1...mj).each { |j|
     active = false
-    (1...mi).to_a.each { |i|
+    (1...mi).each { |i|
       next if pad[i][j] == l && !shape_set.include?([i,j])
       new_active = pad[i][j] == l && pad[i][j-1] != l
       if !active && new_active
@@ -244,7 +244,7 @@ def m(pad, shape_set)
   # from W to E, cols A guys who dont have a A neighbor to the E and are not adjacent going N 
   (1...mj).to_a.reverse.each { |j|
     active = false
-    (1...mi).to_a.each { |i|
+    (1...mi).each { |i|
       next if pad[i][j] == l && !shape_set.include?([i,j])
       new_active = pad[i][j] == l && pad[i][j+1] != l
       if !active && new_active
@@ -259,7 +259,7 @@ def m(pad, shape_set)
   # from N to S, rows A guys who dont have a A neighbor to the N and are not adjacent going W
   (1...mi).each { |i|
     active = false
-    (1...mj).to_a.each { |j|
+    (1...mj).each { |j|
       next if pad[i][j] == l && !shape_set.include?([i,j])
       new_active = pad[i][j] == l && pad[i-1][j] != l
       if !active && new_active
@@ -274,7 +274,7 @@ def m(pad, shape_set)
   # from S to N, rows A guys who dont have a A neighbor to the S and are not adjacent going W
   (1...mi).to_a.reverse.each { |i|
     active = false
-    (1...mj).to_a.each { |j|
+    (1...mj).each { |j|
       next if pad[i][j] == l && !shape_set.include?([i,j])
       new_active = pad[i][j] == l && pad[i+1][j] != l
       if !active && new_active
