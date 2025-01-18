@@ -60,18 +60,17 @@ def s(map, sc, tc)
 
   while !q.empty?
     u = q.pop
+    return [dist, prev] if u == tc
     n(map, u, face[u]).each { |v, new_dist, facing|
       face[v] = facing
       new_dist = dist[u] + new_dist
-      if new_dist <= dist[v]
+      if new_dist < dist[v]
         dist[v] = new_dist
         prev[v] << u
         q.push(v, -new_dist)
       end
     }
   end
-
-  [dist, prev]
 end
 
 def part_one(input)
@@ -93,13 +92,34 @@ def part_one(input)
 end
 
 #puts part_one(ex)
-puts part_one(input) # 73432
+#puts part_one(input) # 73432
 
-def f(v, prev, c)
-  v << c
-  n = prev[c]
-  return if !n
-  n.each { f(v, prev, _1) }
+
+def s(map, sc, tc)
+  q = PriorityQueue.new
+  face = {}
+  dist = Hash.new(Float::INFINITY)
+  prev = Hash.new { |h, k| h[k] = [] }
+
+  q.push(sc, 0)
+  face[sc] = :east
+  dist[sc] = 0
+
+  while !q.empty?
+    u = q.pop
+    return [dist, prev] if u == tc
+    n(map, u, face[u]).each { |v, new_dist, facing|
+      face[v] = facing
+      new_dist = dist[u] + new_dist
+      if new_dist < dist[v]
+        dist[v] = new_dist
+        prev[v] << u
+        q.push(v, -new_dist)
+      end
+    }
+  end
+
+  [dist, prev]
 end
 
 def part_two(input)
@@ -108,13 +128,11 @@ def part_two(input)
   map.each.with_index { |r, i| r.each.with_index { |c, j| sc = [i, j] if c == ?S } }
   tc = nil
   map.each.with_index { |r, i| r.each.with_index { |c, j| tc = [i, j] if c == ?E } }
-  dist, prev = s(map, sc, tc)
 
+  dist, prev = s(map, sc, tc)
   pp prev
-  v = Set.new
-  f(v, prev, tc)
-  v.each { |i,j| map[i][j] = ?O }
-  puts map.map(&:join).join("\n")
+  map.map(&:join).join("\n")
 end
 
+require 'debug'
 puts part_two(ex)
