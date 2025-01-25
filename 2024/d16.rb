@@ -18,6 +18,26 @@ ex = [
   "###############"
 ]
 
+ex2 = [
+  "#################",
+  "#...#...#...#..E#",
+  "#.#.#.#.#.#.#.#.#",
+  "#.#.#.#...#...#.#",
+  "#.#.#.#.###.#.#.#",
+  "#...#.#.#.....#.#",
+  "#.#.#.#.#.#####.#",
+  "#.#...#.#.#.....#",
+  "#.#.#####.#.###.#",
+  "#.#.#.......#...#",
+  "#.#.###.#####.###",
+  "#.#.#...#.....#.#",
+  "#.#.#.#####.###.#",
+  "#.#.#.........#.#",
+  "#.#.#.#########.#",
+  "#S#.............#",
+  "#################",
+]
+
 def n(map, u, facing)
   i, j = u
   m = map.size-1
@@ -92,34 +112,42 @@ def part_one(input)
 end
 
 #puts part_one(ex)
-#puts part_one(input) # 73432
+puts part_one(input) # 73432
 
 
 def s(map, sc, tc)
   q = PriorityQueue.new
-  face = {}
   dist = Hash.new(Float::INFINITY)
-  prev = Hash.new { |h, k| h[k] = [] }
+  prev = Hash.new { |h, k| h[k] = Set.new }
 
-  q.push(sc, 0)
-  face[sc] = :east
-  dist[sc] = 0
+  q.push([sc, :east], 0)
+  dist[[sc, :east]] = 0
 
   while !q.empty?
-    u = q.pop
+    u, f = q.pop
     return [dist, prev] if u == tc
-    n(map, u, face[u]).each { |v, new_dist, facing|
-      face[v] = facing
-      new_dist = dist[u] + new_dist
-      if new_dist < dist[v]
-        dist[v] = new_dist
-        prev[v] << u
-        q.push(v, -new_dist)
+    neigh = n(map, u, f)
+    #debugger if [u,f] == [[7, 5], :north]
+    neigh.each { |v, new_dist, facing|
+      new_dist = dist[[u,f]] + new_dist
+      if new_dist <= dist[[v, facing]]
+        dist[[v, facing]] = new_dist
+        prev[[v, facing]] << [u, f]
+        q.push([v, facing], -new_dist)
       end
     }
   end
 
   [dist, prev]
+end
+
+def u(map, prev, dist, tc, sc)
+  i,j=tc[0]
+  map[i][j] = ?O
+  return if tc == sc
+  prev[tc].each { |m|
+    u(map, prev, dist, m, sc)
+  }
 end
 
 def part_two(input)
@@ -130,9 +158,19 @@ def part_two(input)
   map.each.with_index { |r, i| r.each.with_index { |c, j| tc = [i, j] if c == ?E } }
 
   dist, prev = s(map, sc, tc)
-  pp prev
-  map.map(&:join).join("\n")
+
+  dists = []
+  [tc].product([:north, :east, :south, :west]).each { 
+    dists << dist[_1]
+  }
+  min = [tc].product([:north, :east, :south, :west]).filter { dist[_1] == dists.min }
+  min.each { |m|
+    u(map, prev, dist, m, sc)
+  }
+  map.sum{|a|a.count{_1==?O}}
 end
 
 require 'debug'
-puts part_two(ex)
+#puts part_two(ex)
+#puts part_two(ex2)
+puts part_two(input) # 496
