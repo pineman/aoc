@@ -12,27 +12,59 @@ ex = [
   "brgr",
   "bbrgwb"
 ]
-require 'benchmark'
+
+$c = {}
+def m(design, t)
+  return $c[[design, t]] if $c.key?([design, t])
+  r = _m(design, t)
+  $c[[design, t]] = r
+  r
+end
+
+def _m(design, t)
+  return true if design.empty?
+  f = t.filter { |tt| design.start_with?(tt) }
+  return false if f.empty?
+  f.find { |ff| m(design[ff.size..], t) }
+end
+
 def part_one(input)
   towels, *designs = input.reject(&:empty?)
   towels = towels.split(?,).map(&:strip)
   designs.count { |design|
-    p design
     s = Set.new(design.chars)
     t = towels.filter { |towel| towel.chars.all? { s.include?(_1) } }
-
-    tes = Set.new
-    t.filter { design.start_with?(_1) }.find { |st|
-      (0..design.size-st.size).find { |i| 
-        t.repeated_permutation(i).find {
-          te = st + _1.join[...design.size-st.size]
-          next if te.size != design.size || !tes.add?(te)
-          te == design
-        }
-      }
-    }
+    m(design, t)
   }
 end
 
 #puts part_one(ex)
-puts part_one(input)
+puts part_one(input) # 302
+
+$c = {}
+def m(design, t)
+  return $c[[design, t]] if $c.key?([design, t])
+  r = _m(design, t)
+  $c[[design, t]] = r
+  r
+end
+
+def _m(design, t)
+  return 1 if design.empty?
+  f = t.filter { |tt| design.start_with?(tt) }
+  return 0 if f.empty?
+  f.flat_map { |ff| m(design[ff.size..], t) }.sum
+end
+
+def part_two(input)
+  towels, *designs = input.reject(&:empty?)
+  towels = towels.split(?,).map(&:strip)
+  designs.sum { |design|
+    s = Set.new(design.chars)
+    t = towels.filter { |towel| towel.chars.all? { s.include?(_1) } }
+    m(design, t)
+  }
+end
+
+#puts part_two(ex)
+puts part_two(input) # 771745460576799
