@@ -177,37 +177,10 @@ end
 #part_two(ex, 50)
 #part_two(input, 100)
 
-#def dist(v1, v2)
-#  x1, y1 = v1.to_a
-#  x2, y2 = v2.to_a
-#  (x1-x2).abs + (y1-y2).abs
-#end
-
-require 'algorithms'
-include Containers
-
-def s(h, s, e)
-  q = PriorityQueue.new
-  dist = Hash.new(Float::INFINITY)
-  prev = Hash.new { |h, k| h[k] = [] }
-
-  q.push(s, 0)
-  dist[s] = 0
-
-  while !q.empty?
-    u = q.pop
-    return [dist, prev] if u == e
-    DIRS.each { |d|
-      v = u+d
-      new_dist = h[v].is_a?(Integer) ? 1 : 0 # maximize the amount of walls traversed
-      new_dist = dist[u] + new_dist
-      if new_dist < dist[v]
-        dist[v] = new_dist
-        prev[v] << u
-        q.push(v, -new_dist) # TODO: review "distances" are correct, esp. sign
-      end
-    }
-  end
+def dist(v1, v2)
+  x1, y1 = v1.to_a
+  x2, y2 = v2.to_a
+  (x1-x2).abs + (y1-y2).abs
 end
 
 def part_two2(input, min)
@@ -249,19 +222,22 @@ def part_two2(input, min)
     i, j = k.to_a
     a[i][j] = v
   }
-  pp a
 
-  h.each { |sk, sv|
-    h.filter { |k, v|
-      v.is_a?(Integer) && dist(sk, k) <= 20
-    }.each { |k, v|
-      # TODO: get the path that maximizes the number of # we visited
-      #  or alternatively minimizes the number of Integers we visited
-      dist, prev = s(h, sk, k)
-      dist[k]
-    }
+  cheats = Hash.new { |h, k| h[k] = 0 }
+  track = h.filter { |k, v| v.is_a?(Integer) }
+  track.each { |sk, sv|
+    track
+      .filter { |k, v| v > sv && dist(sk, k) <= 20 }
+      .each { |k, v|
+        saves = h[k] - (h[sk] + dist(sk, k))
+        if saves >= min
+          cheats[saves] += 1
+        end
+      }
   }
+  pp cheats.values.sum
 end
 
-part_two2(ex, 50)
+#part_two2(ex, 50) # 285
+part_two2(input, 100) # 966130
 
