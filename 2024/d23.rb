@@ -141,4 +141,4 @@ def part_two(input)
   max_clique.sort.join(?,)
 end
 
-puts part_two(input) # 1512
+puts part_two(input) # ac,ed,fh,kd,lf,mb,om,pe,qt,uo,uy,vr,wg
